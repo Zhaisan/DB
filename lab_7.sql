@@ -18,16 +18,15 @@ select e1.employee_id, e1.last_name as Employee, e1.manager_id, e2.last_name as 
 
 
 select concat(e1.first_name, ' ', e1.last_name) as name, e1.hire_date                 --5
-    from employees as e1 inner join employees as e2 using(employee_id)
-        where(select hire_date from employees where last_name = 'Jones') < e1.hire_date;
-
+    from employees as e1 inner join employees as e2 on e2.last_name like 'Jones'
+        where e1.hire_date > e2.hire_date;
 
 select department_name, count(*) from employees inner join departments         --6
     using(department_id) group by(department_name);
 
-select e1.employee_id, e1.job_id, current_date::date - e2.hire_date::date as amount_days    --7
-    from employees as e1 inner join employees as e2 using(employee_id)
-        where e1.department_id = 90;
+select e1.employee_id, e1.job_id, current_date::date - e1.hire_date::date as days         --7
+    from employees AS e1 inner join departments
+        as e2 on e1.department_id = e2.department_id where e2.department_id = 90;
 
-select department_id, department_name, first_name    --8
-    from employees inner join departments using(department_id);
+select d.department_id, d.department_name, e.first_name from departments as d inner join employees as e on --8
+    d.manager_id = e.employee_id;
